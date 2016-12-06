@@ -10,22 +10,7 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 /**
- * OnPTestClickListener demonstrates how to access a ContentProvider. First, please read 
- *
- * http://developer.android.com/guide/topics/providers/content-providers.html
- * http://developer.android.com/reference/android/content/ContentProvider.html
- *
- * before you start. Please note that our use of a ContentProvider is a bit different from the
- * standard way of using it as described in the PA2 spec. The bottom line is that our
- * ContentProvider does not have full support for SQL. It is just a key-value table, like a hash
- * table. It just needs to be able to insert (key, value) pairs, store them, and return them when
- * queried.
- *
- * A ContentProvider has a unique URI that other apps use to access it. ContentResolver is
- * the class to use when accessing a ContentProvider.
- *
- * @author stevko
- *
+ * OnPTestClickListener demonstrates how to access a ContentProvider.
  */
 public class OnPTestClickListener implements OnClickListener {
 
@@ -109,13 +94,6 @@ public class OnPTestClickListener implements OnClickListener {
      * testQuery() uses ContentResolver.query() to retrieves values from your ContentProvider.
      * It simply queries one key at a time and verifies whether it matches any (key, value) pair
      * previously inserted by testInsert().
-     *
-     * Please pay extra attention to the Cursor object you return from your ContentProvider.
-     * It should have two columns; the first column (KEY_FIELD) is for keys 
-     * and the second column (VALUE_FIELD) is values. In addition, it should include exactly
-     * one row that contains a key and a value.
-     *
-     * @return
      */
     private boolean testQuery() {
         try {

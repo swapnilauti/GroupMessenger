@@ -1,5 +1,9 @@
 [
     {
+        "merged": "/home/swapnil/GroupMessenger/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/ic_launcher.png",
+        "source": "/home/swapnil/GroupMessenger/app/src/main/res/drawable-mdpi/ic_launcher.png"
+    },
+    {
         "merged": "/home/swapnil/AndroidStudioProjects/GroupMessenger2/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/ic_launcher.png",
         "source": "/home/swapnil/AndroidStudioProjects/GroupMessenger2/app/src/main/res/drawable-mdpi/ic_launcher.png"
     }

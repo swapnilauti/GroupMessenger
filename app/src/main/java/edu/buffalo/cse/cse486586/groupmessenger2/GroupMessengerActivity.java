@@ -11,21 +11,12 @@ import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
-/*
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
-*/
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,22 +26,15 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.UnknownHostException;
 import java.util.*;
-import java.util.Collection;
 /**
- * GroupMessengerActivity is the main Activity for the assignment.
- *
- * @author stevko
+ * Activity Class
  */
 public class GroupMessengerActivity extends Activity {
     private Integer priorityCount = 0;
     private Integer mid = 0;
     private Integer keyid =0;
     private Uri mUri = null;
-    //private GoogleApiClient client;
     private HashSet<Integer> remotePorts;
     private HashSet<Integer> waitingPorts = new HashSet<Integer>();
     private HashMap<String,HashSet<Integer>> waitingPortHM;
@@ -59,7 +43,6 @@ public class GroupMessengerActivity extends Activity {
     private HashMap<String,Integer> msgHM;
     private String myPort = null;
     private PriorityQueue<PQNode> msgQueue = new PriorityQueue<PQNode>();
-    //private ClientTask ct = new ClientTask();
     private TextView localTextView = null;
 
     private void buildUri(String scheme, String authority) {
@@ -82,11 +65,12 @@ public class GroupMessengerActivity extends Activity {
         TelephonyManager tel = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
         String portStr = tel.getLine1Number().substring(tel.getLine1Number().length() - 4);
         myPort = String.valueOf((Integer.parseInt(portStr) * 2));
-        //Log.e("My POrt", "Init my port " + myPort);
+        Log.d("My Port", "Init my port " + myPort);
+
     }
     private void insertContentProvider(String message){
         ContentValues cv = new ContentValues();
-        Log.e("insertContentProvider", "" + keyid + " " + message);
+        Log.d("insertContentProvider", "" + keyid + " " + message);
         cv.put("key", keyid++);
         cv.put("value", message);
         getContentResolver().insert(mUri, cv);
@@ -146,10 +130,8 @@ public class GroupMessengerActivity extends Activity {
                 socket = new Socket(InetAddress.getByAddress(new byte[]{10, 0, 2, 2}), portNo);
                 socketHM.put(portNo, socket);
 
-            } catch (UnknownHostException e) {
-                ////Log.e("createSockets", "createSockets UnknownHostException");
-            } catch (IOException e) {
-                ////Log.e("createSockets", "createSockets IOException");
+            } catch (Exception e) {
+                Log.e("createSockets", e.getMessage());
             }
         }
         hmCreated=true;
@@ -233,14 +215,9 @@ public class GroupMessengerActivity extends Activity {
             serverSocket = new ServerSocket(10000);
             new ServerTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, serverSocket);
         } catch (IOException e) {
-            ////Log.e("onCreate", "Can't create a ServerSocket");
+            Log.e("onCreate", "Can't create a ServerSocket");
             return;
-        } finally {
-
         }
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        // client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -257,46 +234,16 @@ public class GroupMessengerActivity extends Activity {
     @Override
     public void onStart() {
         super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        /*client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "GroupMessenger Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correnew ClientTask().
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correnew ClientTask().
-                Uri.parse("android-app://edu.buffalo.cse.cse486586.groupmessenger1/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);*/
     }
 
     @Override
     public void onStop() {
         super.onStop();
         while (!msgQueue.isEmpty()) {
-            //Log.e("Server Task", "Inside QueryUpdate");
+            Log.d("Server Task", "Inside QueryUpdate");
             PQNode temp = msgQueue.poll();
             insertContentProvider(temp.getMessage());
         }
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        /*Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "GroupMessenger Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correnew ClientTask().
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correnew ClientTask().
-                Uri.parse("android-app://edu.buffalo.cse.cse486586.groupmessenger1/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();*/
     }
 
     protected class PQNode implements Comparable<PQNode>{
@@ -360,7 +307,7 @@ public class GroupMessengerActivity extends Activity {
     public void queueUpdate(){
         synchronized (msgQueue) {
             while (!msgQueue.isEmpty() && msgQueue.peek().isDeliverable()) {
-                //Log.e("Server Task", "Inside QueryUpdate");
+                Log.d("Server Task", "Inside QueryUpdate");
                 PQNode temp = msgQueue.poll();
                 insertContentProvider(temp.getMessage());
             }
@@ -378,8 +325,6 @@ public class GroupMessengerActivity extends Activity {
             Socket socket = null;
             try {
                 while (true) {
-                       //serverSocket.setSoTimeout(500);
-
                     socket = serverSocket.accept();
                     is = socket.getInputStream();
                     br = new BufferedReader(new InputStreamReader(is));
@@ -398,16 +343,14 @@ public class GroupMessengerActivity extends Activity {
                             String arr2[] = temp.split(":");
                             String uniqueId = arr2[0];
                             if(arr2.length==2) {                                                    //Agreed Priority
-                                //Log.e("Server Task", "Received agreed prioirty");
+                                Log.d("Server Task", "Received agreed prioirty");
                                 Double finalPriority = Double.parseDouble(arr2[1]);
                                 changePQ(uniqueId,finalPriority);
                             }
                             else{                                                                       //Proposed Priority
-                                ////Log.e("Server Task", "Processing Proposed Priority");
-                                // if(arr2[2].equals(myPort))
-                                ////Log.e("Server Task", "MY PROPOSED MSG RECEIVED");
+                                Log.d("Server Task", "Processing Proposed Priority");
                                 if(msgHM.containsKey(uniqueId)) {                                         // if msg belong to this avd
-                                    ////Log.e("Server Task", "Proposed Priority Received at Sender");
+                                    Log.d("Server Task", "Proposed Priority Received at Sender");
                                     waitingPorts.remove(Integer.parseInt(arr2[2]));
                                     waitingPortHM.get(uniqueId).remove(Integer.parseInt(arr2[2]));
                                     Integer maxPriority = msgHM.get(uniqueId);
@@ -416,8 +359,6 @@ public class GroupMessengerActivity extends Activity {
                                         maxPriority=curPriority;
                                     msgHM.put(uniqueId, maxPriority);
                                     if(waitingPortHM.get(uniqueId).isEmpty()) {                                                        //If all avds have sent their Proposed Priority
-                                        ////Log.e("Server Task", "COUNT"+count);
-
                                         sendAgreedPriority(uniqueId);
                                     }
                                 }
@@ -427,7 +368,7 @@ public class GroupMessengerActivity extends Activity {
                 }
             }
             catch (Exception e){
-                Log.e("Server Task", "waiting ports size = "+waitingPorts.size());
+                Log.d("Server Task", "waiting ports size = "+waitingPorts.size());
                 if(waitingPorts.size()<=1) {
                     for (Iterator<Integer> it = waitingPorts.iterator(); it.hasNext(); ) {
                         Integer deadPort = it.next();
@@ -445,7 +386,6 @@ public class GroupMessengerActivity extends Activity {
                         removeDeadMsgs(deadPort);
                     }
                 }
-               // waitingPorts = new HashSet<Integer>();
             }
             finally {
                 try {

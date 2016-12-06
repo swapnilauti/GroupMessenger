@@ -2,5 +2,9 @@
     {
         "merged": "/home/swapnil/AndroidStudioProjects/GroupMessenger2/app/build/intermediates/res/merged/debug/menu/activity_group_messenger.xml",
         "source": "/home/swapnil/AndroidStudioProjects/GroupMessenger2/app/src/main/res/menu/activity_group_messenger.xml"
+    },
+    {
+        "merged": "/home/swapnil/GroupMessenger/app/build/intermediates/res/merged/debug/menu/activity_group_messenger.xml",
+        "source": "/home/swapnil/GroupMessenger/app/src/main/res/menu/activity_group_messenger.xml"
     }
 ]
